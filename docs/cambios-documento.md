@@ -90,3 +90,17 @@ metodo, `JSON.stringify` serializaba la estructura interna del Value
 Object, lo cual habria obligado a cada cliente (desktop, web, mobile) a
 conocer esa forma anidada. Mantener la conversion en el propio nucleo evita
 repetir esa logica de mapeo tres veces en la capa de presentacion.
+
+## Nota 9: Un unico codigo React reutilizado por Web y Desktop
+
+Ante la fecha limite de entrega, se decidio (con aprobacion explicita del
+usuario) construir una sola aplicacion React + Vite en packages/web que
+contiene todas las paginas, componentes y logica de conexion a la API REST.
+packages/desktop (Electron) no duplica esta interfaz: su proceso principal
+simplemente carga esa misma aplicacion (el servidor de desarrollo de Vite
+en modo desarrollo, o el build estatico de packages/web/dist en modo
+empaquetado) dentro de una ventana nativa. Esto satisface el requisito de
+"reutilizacion de componentes" de la Fase 5 y evita construir dos interfaces
+graficas independientes bajo una ventana de tiempo muy reducida. La
+aplicacion movil (React Native + Expo) si requiere una reescritura de UI
+propia, ya que React Native no renderiza componentes DOM de React web.
