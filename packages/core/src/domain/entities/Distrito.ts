@@ -32,4 +32,11 @@ export class Distrito {
   public getDescripcion(): string {
     return this.descripcion;
   }
+
+  public toJSON() {
+    return {
+      idDistrito: this.id.getValue(),
+      descripcion: this.descripcion,
+    };
+  }
 }

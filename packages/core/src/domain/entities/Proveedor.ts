@@ -79,4 +79,15 @@ export class Proveedor {
   public getRepresentanteLegal(): string {
     return this.representanteLegal;
   }
+
+  public toJSON() {
+    return {
+      idProveedor: this.id.getValue(),
+      razonSocial: this.razonSocial,
+      direccion: this.direccion,
+      telefono: this.telefono,
+      idDistrito: this.idDistrito.getValue(),
+      representanteLegal: this.representanteLegal,
+    };
+  }
 }

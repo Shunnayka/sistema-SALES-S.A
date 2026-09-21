@@ -53,3 +53,40 @@ espera, y viceversa. Los adaptadores (`PostgresProductoAdapter`,
 `PostgresFacturaAdapter`, `PostgresOrdenCompraAdapter`) delegan esta
 conversión en el mapper correspondiente y nunca exponen tipos de Prisma
 fuera de la capa de persistencia.
+
+## Nota 6: Autenticacion JWT basica sin entidad Usuario
+
+El modelo de dominio no define una entidad Usuario ni un mecanismo de
+credenciales propio. Dado el requisito "Authentication: JWT from Phase 3
+(basic)" y la urgencia de entrega, la Fase 3 implementa un login unico
+(POST /auth/login) validado contra un usuario y contrasena administrativos
+tomados de variables de entorno (ADMIN_USER, ADMIN_PASSWORD), que emite un
+JWT firmado con JWT_SECRET. Todos los endpoints salvo /auth/login exigen
+este token (guard global). Esto demuestra el mecanismo de autenticacion
+requerido sin construir un modulo de gestion de usuarios fuera del alcance
+definido; se deja anotado como candidato a extender (tabla de usuarios con
+contrasenas hasheadas) si el documento academico lo requiere.
+
+## Nota 7: CRUD directo con Prisma para Distrito, Cliente, Proveedor y Vendedor
+
+El nucleo hexagonal solo define puertos de salida para Producto, Factura y
+OrdenCompra (segun el modelo de dominio original). Distrito, Cliente,
+Proveedor y Vendedor no tienen casos de uso ni puertos propios definidos.
+Para exponer "endpoints funcionales para todas las entidades" en la Fase 3
+sin ampliar el alcance ya acordado del nucleo, sus controladores REST usan
+el cliente Prisma de @sistema-sales/persistence directamente para las
+operaciones CRUD. Producto, Factura y OrdenCompra, en cambio, enrutan sus
+operaciones de negocio (registrar venta, ajustar stock, gestionar
+abastecimiento) a traves de los servicios de aplicacion del nucleo
+(VentaService, InventarioService, AbastecimientoService), preservando las
+invariantes de dominio donde el modelo original las definio.
+
+## Nota 8: Serializacion JSON de las entidades (toJSON)
+
+Las entidades del nucleo exponen un metodo toJSON() que aplana su
+identificador (Value Object) y el de sus referencias a un valor primitivo
+(por ejemplo, `idProducto` en lugar de `id: { value: "P001" }"). Sin este
+metodo, `JSON.stringify` serializaba la estructura interna del Value
+Object, lo cual habria obligado a cada cliente (desktop, web, mobile) a
+conocer esa forma anidada. Mantener la conversion en el propio nucleo evita
+repetir esa logica de mapeo tres veces en la capa de presentacion.

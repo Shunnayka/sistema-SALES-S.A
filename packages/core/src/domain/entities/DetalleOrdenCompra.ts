@@ -29,4 +29,12 @@ export class DetalleOrdenCompra {
   public getCantidadSolicitada(): number {
     return this.cantidadSolicitada;
   }
+
+  public toJSON() {
+    return {
+      numeroOrden: this.id.getNumeroOrden(),
+      idProducto: this.id.getIdProducto(),
+      cantidadSolicitada: this.cantidadSolicitada,
+    };
+  }
 }

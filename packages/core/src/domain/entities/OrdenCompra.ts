@@ -97,4 +97,15 @@ export class OrdenCompra {
   public getDetalles(): DetalleOrdenCompra[] {
     return [...this.detalles];
   }
+
+  public toJSON() {
+    return {
+      numeroOrden: this.numeroOrden.getValue(),
+      fechaRegistro: this.fechaRegistro,
+      idProveedor: this.idProveedor.getValue(),
+      estado: this.estado,
+      fechaAtencion: this.fechaAtencion,
+      detalles: this.detalles,
+    };
+  }
 }

@@ -116,4 +116,18 @@ export class Cliente {
   public getCondicionCliente(): CondicionCliente {
     return this.condicionCliente;
   }
+
+  public toJSON() {
+    return {
+      idCliente: this.id.getValue(),
+      nombreRazonSocial: this.nombreRazonSocial,
+      direccion: this.direccion,
+      telefono: this.telefono,
+      ruc: this.ruc,
+      idDistrito: this.idDistrito.getValue(),
+      fechaRegistro: this.fechaRegistro,
+      tipoCliente: this.tipoCliente,
+      condicionCliente: this.condicionCliente,
+    };
+  }
 }

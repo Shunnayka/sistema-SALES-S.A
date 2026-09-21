@@ -43,4 +43,14 @@ export class DetalleFactura {
   public getPrecioVenta(): number {
     return this.precioVenta;
   }
+
+  public toJSON() {
+    return {
+      numeroFactura: this.id.getNumeroFactura(),
+      idProducto: this.id.getIdProducto(),
+      cantidad: this.cantidad,
+      precioVenta: this.precioVenta,
+      subtotal: this.subtotal(),
+    };
+  }
 }

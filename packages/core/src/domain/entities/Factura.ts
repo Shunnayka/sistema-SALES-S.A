@@ -125,4 +125,18 @@ export class Factura {
   public getDetalles(): DetalleFactura[] {
     return [...this.detalles];
   }
+
+  public toJSON() {
+    return {
+      numeroFactura: this.numeroFactura.getValue(),
+      fechaRegistro: this.fechaRegistro,
+      idCliente: this.idCliente.getValue(),
+      idVendedor: this.idVendedor.getValue(),
+      porcentajeIva: this.porcentajeIva,
+      estado: this.estado,
+      fechaCancelacion: this.fechaCancelacion,
+      detalles: this.detalles,
+      total: this.calcularTotal(),
+    };
+  }
 }

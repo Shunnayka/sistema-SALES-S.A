@@ -109,4 +109,17 @@ export class Producto {
   public getEsImportado(): boolean {
     return this.esImportado;
   }
+
+  public toJSON() {
+    return {
+      idProducto: this.id.getValue(),
+      descripcion: this.descripcion,
+      precio: this.precio,
+      stockActual: this.stockActual,
+      stockMinimo: this.stockMinimo,
+      marca: this.marca,
+      lineaProducto: this.lineaProducto,
+      esImportado: this.esImportado,
+    };
+  }
 }

@@ -83,4 +83,16 @@ export class Vendedor {
   public getTipoVendedor(): string {
     return this.tipoVendedor;
   }
+
+  public toJSON() {
+    return {
+      idVendedor: this.id.getValue(),
+      nombres: this.nombres,
+      apellidos: this.apellidos,
+      sueldo: this.sueldo,
+      fechaInicio: this.fechaInicio,
+      idDistrito: this.idDistrito.getValue(),
+      tipoVendedor: this.tipoVendedor,
+    };
+  }
 }
