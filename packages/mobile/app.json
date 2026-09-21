@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "SISTEMA_SALES",
+    "slug": "sistema-sales-mobile",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1e3a8a"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

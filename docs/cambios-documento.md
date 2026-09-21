@@ -117,3 +117,22 @@ que carga el mismo build estatico de packages/web que usaria el
 instalador. Generar el instalador queda como un `npm run package` pendiente
 de ejecutar cuando el tiempo lo permita.
 
+## Nota 11: Verificacion de la app movil sin dispositivo fisico ni emulador
+
+El entorno de esta sesion no tiene un emulador Android/iOS ni Expo Go
+disponibles para probar packages/mobile visualmente. La app se verifico
+de dos formas: `tsc --noEmit` (sin errores de tipos) y `npx expo export
+--platform android`, que ejecuta el bundler Metro real sobre todo el
+arbol de dependencias (788 modulos) y genera el bundle .hbc de Android sin
+errores, confirmando que las pantallas, la navegacion y el cliente HTTP
+resuelven correctamente. Esto no reemplaza una prueba visual en un
+dispositivo real, que queda pendiente para el instructor o el autor.
+
+Al configurar el monorepo con npm workspaces se detecto que
+`node_modules/expo/AppEntry.js` (el entry point por defecto de Expo) asume
+una instalacion local no compartida de `expo`, y falla cuando npm eleva
+("hoists") el paquete a la raiz del monorepo, como ocurre aqui. La solucion
+fue reemplazar el campo "main" de packages/mobile/package.json por un
+index.js propio que importa App.tsx explicitamente, el patron recomendado
+por Expo para entry points personalizados.
+

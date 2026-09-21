@@ -17,3 +17,9 @@ build/
 
 # Test coverage
 coverage/
+
+# Expo
+.expo/
+
+# electron-builder output
+release/
