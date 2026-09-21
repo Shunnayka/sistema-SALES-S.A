@@ -12,7 +12,8 @@ Information System for Integral Management of Sales, Invoicing, Inventory and Su
 
 SISTEMA_SALES is an academic practical case built with a hexagonal (ports and adapters)
 architecture around a shared, framework-free domain core. The same core is consumed by
-a REST API, a desktop client, a web client and a mobile client.
+a REST API and by three client applications, all functional and delivered together:
+desktop (Electron), web (React + Vite) and mobile (React Native + Expo).
 
 ## Tech Stack
 
@@ -166,29 +167,40 @@ to the time constraint (Nota 10).
 
 ## 9. Run the mobile client (Expo)
 
+The mobile client reads the API base URL from the `EXPO_PUBLIC_API_URL` environment
+variable. If not set, it defaults to `http://localhost:3000`.
+
+| Environment | Value |
+|---|---|
+| Expo Web (browser on the same machine) | `http://localhost:3000` (default) |
+| iOS simulator | `http://localhost:3000` (default) |
+| Android emulator | `http://10.0.2.2:3000` |
+| Physical device (Expo Go) | `http://<your-machine's-LAN-IP>:3000` |
+
+To start the mobile client:
+
 ```bash
 cd packages/mobile
 npm start
 ```
 
-Before running on an emulator or device, edit `packages/mobile/src/config/api.ts` — the
-API is on the *development machine's* localhost, which is not reachable as `localhost` from
-an emulator or phone:
+To override the default API URL, set the variable before starting Expo:
 
-- Android emulator: `http://10.0.2.2:3000` (the default already set)
-- iOS simulator: `http://localhost:3000`
-- Physical device via Expo Go: `http://<your-machine's-LAN-IP>:3000`
+```bash
+# PowerShell
+$env:EXPO_PUBLIC_API_URL="http://10.0.2.2:3000"; npx expo start
 
-## Default credentials
+# Bash / macOS / Linux
+EXPO_PUBLIC_API_URL=http://10.0.2.2:3000 npx expo start
+```
 
-| Field | Value |
-|---|---|
-| Username | `admin` |
-| Password | `admin1234` |
+To run the mobile client in the browser (no emulator or physical device required):
 
-Configured via `ADMIN_USER` / `ADMIN_PASSWORD` in `packages/api/.env`. See
-`docs/cambios-documento.md` Nota 6 for why authentication works this way (no `Usuario`
-entity was defined in the original domain model).
+```bash
+npx expo install react-dom react-native-web @expo/metro-runtime
+npx expo start --web   # opens http://localhost:8081
+```
+Log in with `admin` / `admin1234` (the same credentials as the API).
 
 ## Seed data
 

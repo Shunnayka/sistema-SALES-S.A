@@ -1,7 +1,14 @@
-// The API runs on the development machine's localhost, which is not
-// reachable as "localhost" from an emulator or physical device:
-// - Android emulator: use 10.0.2.2 (the emulator's alias for the host).
-// - iOS simulator: localhost works because it shares the host's network.
-// - Physical device (Expo Go): use the machine's LAN IP, e.g. 192.168.x.x.
-// Adjust this constant for the environment you are testing against.
-export const API_URL = 'http://10.0.2.2:3000';
+// API URL resolution for the mobile client.
+//
+// Default: localhost, which works for Expo Web (browser on the same machine)
+// and the iOS simulator (shares the host network).
+//
+// For other environments, override with the EXPO_PUBLIC_API_URL environment
+// variable before running `expo start`:
+//   - Android emulator: EXPO_PUBLIC_API_URL=http://10.0.2.2:3000
+//   - Physical device:  EXPO_PUBLIC_API_URL=http://<host-LAN-IP>:3000
+//
+// Expo automatically injects any variable prefixed with EXPO_PUBLIC_ into
+// the bundle at build time, so no additional library is required.
+
+export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000';
