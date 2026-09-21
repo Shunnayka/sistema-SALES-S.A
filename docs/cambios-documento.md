@@ -136,3 +136,20 @@ fue reemplazar el campo "main" de packages/mobile/package.json por un
 index.js propio que importa App.tsx explicitamente, el patron recomendado
 por Expo para entry points personalizados.
 
+## Nota 12: Restricciones CHECK agregadas en una segunda migracion
+
+Prisma 6 (API estable) no permite declarar restricciones CHECK dentro de
+schema.prisma. La migracion inicial generada por Prisma (20260921171513_init)
+solo incluye PK, FK, NOT NULL, longitudes VARCHAR y el UNIQUE de
+cliente.ruc. Para que la base de datos real coincida con el diccionario de
+datos 3NF documentado en docs/sql/schema.sql, se agrego una segunda
+migracion escrita a mano (20260921175208_add_check_constraints) con las
+sentencias ALTER TABLE ... ADD CONSTRAINT ... CHECK correspondientes a cada
+restriccion del modelo (condicion_cliente, sueldo, precio, stock_actual,
+stock_minimo, estado de factura y orden_compra, cantidad, precio_venta,
+cantidad_solicitada). Estas restricciones ya estan aplicadas en la base de
+datos local. La validacion de las mismas reglas tambien existe en la capa
+de dominio (@sistema-sales/core), de modo que la aplicacion falla con un
+mensaje claro antes de llegar a la base de datos; el CHECK a nivel de SQL
+es una segunda linea de defensa fiel al modelo entidad-relacion original.
+
