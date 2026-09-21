@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Distrito {
+  idDistrito  String @id @map("id_distrito") @db.VarChar(10)
+  descripcion String @map("descripcion") @db.VarChar(100)
+
+  clientes    Cliente[]
+  proveedores Proveedor[]
+  vendedores  Vendedor[]
+
+  @@map("distrito")
+}
+
+model Cliente {
+  idCliente         String   @id @map("id_cliente") @db.VarChar(10)
+  nombreRazonSocial String   @map("nombre_razon_social") @db.VarChar(150)
+  direccion         String   @map("direccion") @db.VarChar(200)
+  telefono          String   @map("telefono") @db.VarChar(15)
+  ruc               String   @unique @map("ruc") @db.VarChar(13)
+  idDistrito        String   @map("id_distrito") @db.VarChar(10)
+  fechaRegistro     DateTime @map("fecha_registro") @db.Date
+  tipoCliente       String   @map("tipo_cliente") @db.VarChar(30)
+  condicionCliente  String   @map("condicion_cliente") @db.VarChar(20)
+
+  distrito Distrito  @relation(fields: [idDistrito], references: [idDistrito])
+  facturas Factura[]
+
+  @@map("cliente")
+}
+
+model Proveedor {
+  idProveedor        String @id @map("id_proveedor") @db.VarChar(10)
+  razonSocial        String @map("razon_social") @db.VarChar(150)
+  direccion          String @map("direccion") @db.VarChar(200)
+  telefono           String @map("telefono") @db.VarChar(15)
+  idDistrito         String @map("id_distrito") @db.VarChar(10)
+  representanteLegal String @map("representante_legal") @db.VarChar(120)
+
+  distrito        Distrito         @relation(fields: [idDistrito], references: [idDistrito])
+  ordenesCompra   OrdenCompra[]
+  abastecimientos Abastecimiento[]
+
+  @@map("proveedor")
+}
+
+model Vendedor {
+  idVendedor   String   @id @map("id_vendedor") @db.VarChar(10)
+  nombres      String   @map("nombres") @db.VarChar(80)
+  apellidos    String   @map("apellidos") @db.VarChar(80)
+  sueldo       Decimal  @map("sueldo") @db.Decimal(10, 2)
+  fechaInicio  DateTime @map("fecha_inicio") @db.Date
+  idDistrito   String   @map("id_distrito") @db.VarChar(10)
+  tipoVendedor String   @map("tipo_vendedor") @db.VarChar(30)
+
+  distrito Distrito  @relation(fields: [idDistrito], references: [idDistrito])
+  facturas Factura[]
+
+  @@map("vendedor")
+}
+
+model Producto {
+  idProducto    String  @id @map("id_producto") @db.VarChar(10)
+  descripcion   String  @map("descripcion") @db.VarChar(200)
+  precio        Decimal @map("precio") @db.Decimal(10, 2)
+  stockActual   Int     @map("stock_actual")
+  stockMinimo   Int     @map("stock_minimo")
+  marca         String  @map("marca") @db.VarChar(60)
+  lineaProducto String  @map("linea_producto") @db.VarChar(60)
+  esImportado   Boolean @default(false) @map("es_importado")
+
+  detallesFactura     DetalleFactura[]
+  detallesOrdenCompra DetalleOrdenCompra[]
+  abastecimientos     Abastecimiento[]
+
+  @@map("producto")
+}
+
+model Factura {
+  numeroFactura    String    @id @map("numero_factura") @db.VarChar(15)
+  fechaRegistro    DateTime  @map("fecha_registro") @db.Date
+  idCliente        String    @map("id_cliente") @db.VarChar(10)
+  fechaCancelacion DateTime? @map("fecha_cancelacion") @db.Date
+  estado           String    @map("estado") @db.VarChar(20)
+  idVendedor       String    @map("id_vendedor") @db.VarChar(10)
+  porcentajeIva    Decimal   @map("porcentaje_iva") @db.Decimal(5, 2)
+
+  cliente  Cliente          @relation(fields: [idCliente], references: [idCliente])
+  vendedor Vendedor         @relation(fields: [idVendedor], references: [idVendedor])
+  detalles DetalleFactura[]
+
+  @@map("factura")
+}
+
+model DetalleFactura {
+  numeroFactura String  @map("numero_factura") @db.VarChar(15)
+  idProducto    String  @map("id_producto") @db.VarChar(10)
+  cantidad      Int     @map("cantidad")
+  precioVenta   Decimal @map("precio_venta") @db.Decimal(10, 2)
+
+  factura  Factura  @relation(fields: [numeroFactura], references: [numeroFactura], onDelete: Cascade)
+  producto Producto @relation(fields: [idProducto], references: [idProducto], onDelete: Restrict)
+
+  @@id([numeroFactura, idProducto])
+  @@map("detalle_factura")
+}
+
+model OrdenCompra {
+  numeroOrden   String    @id @map("numero_orden") @db.VarChar(15)
+  fechaRegistro DateTime  @map("fecha_registro") @db.Date
+  idProveedor   String    @map("id_proveedor") @db.VarChar(10)
+  fechaAtencion DateTime? @map("fecha_atencion") @db.Date
+  estado        String    @map("estado") @db.VarChar(20)
+
+  proveedor Proveedor            @relation(fields: [idProveedor], references: [idProveedor])
+  detalles  DetalleOrdenCompra[]
+
+  @@map("orden_compra")
+}
+
+model DetalleOrdenCompra {
+  numeroOrden        String @map("numero_orden") @db.VarChar(15)
+  idProducto         String @map("id_producto") @db.VarChar(10)
+  cantidadSolicitada Int    @map("cantidad_solicitada")
+
+  ordenCompra OrdenCompra @relation(fields: [numeroOrden], references: [numeroOrden], onDelete: Cascade)
+  producto    Producto    @relation(fields: [idProducto], references: [idProducto], onDelete: Restrict)
+
+  @@id([numeroOrden, idProducto])
+  @@map("detalle_orden")
+}
+
+model Abastecimiento {
+  idProveedor String  @map("id_proveedor") @db.VarChar(10)
+  idProducto  String  @map("id_producto") @db.VarChar(10)
+  precio      Decimal @map("precio") @db.Decimal(10, 2)
+
+  proveedor Proveedor @relation(fields: [idProveedor], references: [idProveedor])
+  producto  Producto  @relation(fields: [idProducto], references: [idProducto])
+
+  @@id([idProveedor, idProducto])
+  @@map("abastecimiento")
+}

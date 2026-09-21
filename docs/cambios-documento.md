@@ -38,3 +38,18 @@ operaciones son intrínsecamente asíncronas. Esta decisión evita una
 refactorización posterior y no representa un cambio de arquitectura, solo
 una adecuación de las firmas a un caso de uso real con acceso a base de
 datos.
+
+## Nota 5: Mappers como costura entre Value Objects y claves compuestas de Prisma
+
+Prisma no tiene un concepto nativo de Value Object ni de identificador
+compuesto como objeto de dominio: solo entiende columnas y claves primarias
+compuestas (`@@id([...])`). Para que esta limitación técnica no se filtre
+al núcleo hexagonal, la Fase 2 introduce una clase *Mapper* por cada
+adaptador (`ProductoMapper`, `FacturaMapper`, `OrdenCompraMapper`) que actúa
+como costura entre ambos mundos: convierte las entidades y Value Objects del
+dominio (incluyendo los identificadores compuestos `DetalleFacturaId` y
+`DetalleOrdenCompraId`) hacia las filas y claves compuestas que Prisma
+espera, y viceversa. Los adaptadores (`PostgresProductoAdapter`,
+`PostgresFacturaAdapter`, `PostgresOrdenCompraAdapter`) delegan esta
+conversión en el mapper correspondiente y nunca exponen tipos de Prisma
+fuera de la capa de persistencia.
