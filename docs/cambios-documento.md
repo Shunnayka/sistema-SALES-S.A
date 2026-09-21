@@ -104,3 +104,16 @@ empaquetado) dentro de una ventana nativa. Esto satisface el requisito de
 graficas independientes bajo una ventana de tiempo muy reducida. La
 aplicacion movil (React Native + Expo) si requiere una reescritura de UI
 propia, ya que React Native no renderiza componentes DOM de React web.
+
+## Nota 10: Empaquetado de Electron configurado pero no ejecutado
+
+packages/desktop incluye configuracion de electron-builder (appId,
+productName, targets para Windows/Linux/macOS) en package.json, cumpliendo
+el punto "packaging" de la Fase 4. Dada la ventana de tiempo de entrega, no
+se genero el instalador real (electron-builder descarga binarios
+adicionales por plataforma y puede tardar varios minutos); la aplicacion se
+verifico funcional ejecutandola directamente con Electron (`npm start`),
+que carga el mismo build estatico de packages/web que usaria el
+instalador. Generar el instalador queda como un `npm run package` pendiente
+de ejecutar cuando el tiempo lo permita.
+

@@ -1,0 +1,36 @@
+{
+  "name": "@sistema-sales/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "electron .",
+    "dev": "cross-env ELECTRON_START_URL=http://localhost:5173 electron .",
+    "package": "npm run build && electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.6.3",
+    "@types/node": "^22.9.0"
+  },
+  "build": {
+    "appId": "com.sistemasales.desktop",
+    "productName": "SISTEMA_SALES",
+    "files": ["dist/**/*", "../web/dist/**/*"],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  }
+}
